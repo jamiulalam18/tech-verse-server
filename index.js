@@ -70,6 +70,33 @@ async function run() {
       });
       res.send(result);
     });
+
+    app.put('/products/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const options = { upsert: true };
+      const updatedProduct = req.body;
+
+      const product = {
+          $set: {
+            brand_name: updatedProduct.brand_name,
+            product_name: updatedProduct.product_name,
+            product_category: updatedProduct.product_category,
+            product_image: updatedProduct.product_image,
+            product_price: updatedProduct.product_price,
+            product_rating: updatedProduct.product_rating,
+            product_short_description: updatedProduct.product_short_description,
+            product_long_description: updatedProduct.product_long_description,
+            product_highlights: updatedProduct.product_highlights
+          }
+      }
+
+      const result = await productsCollection.updateOne(filter, product, options);
+      res.send(result);
+  })
+
+
+
     app.get("/brandDetails/:id", async (req, res) => {
       const id = req.params.id;
       const brand = await brandsCollection.findOne({
