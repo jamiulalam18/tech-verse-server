@@ -41,6 +41,12 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/usersByEmail/:email", async (req, res) => {
+      const email = req.params.email;
+      const result = await usersCollection.findOne({ email: email });
+      res.send(result);
+    });
+
     app.post("/users", async (req, res) => {
       const user = req.body;
       const result = await usersCollection.insertOne(user);
