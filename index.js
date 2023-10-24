@@ -57,6 +57,12 @@ async function run() {
       const result = await productsCollection.find().toArray();
       res.send(result);
     });
+    app.post("/products", async (req, res) => {
+      const new_product=req.body;
+      const result = await productsCollection.insertOne(new_product);
+      res.send(result);
+    });
+
     app.get("/products/:id", async (req, res) => {
       const id = req.params.id;
       const result = await productsCollection.findOne({
@@ -115,3 +121,16 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+
+
+// ভার্সেল ও ডিপ্লয় করার পর যদি ডাটা আসতে লেট হয় await client.connect() এবং await client.db (এই লাইনটা নিচের দিকে)এই দুইটা লাইন কেটে দিয়ে
+// যে গুলো require করতেছেন সেগুলো এমনভাবে রিফ্যাক্টর করে নেবেন।
+// const express = require('express');
+// const app = express();
+// const cors = require('cors');
+// require('dotenv').config()
+// const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+// const port= process.env.PORT || 5000
+// এরপর vercel --prod দিয়ে আপডেট করে নতুন যে লিংক পাবেন সেটা চেক করে ফ্রন্টইন্ড এ আপডেট করে দেবেন।
+// এই কাজগুলো করে ফিক্সড করে জমা দেন
