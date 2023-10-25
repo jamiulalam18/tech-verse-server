@@ -1,16 +1,28 @@
-const express = require("express");
-const cors = require("cors");
-const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+// const express = require("express");
+// const cors = require("cors");
+// require("dotenv").config();
+// const port = process.env.PORT || 5000;
+// const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+// const app = express();
+
+const express = require('express');
 const app = express();
+const cors = require('cors');
+require('dotenv').config()
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const port= process.env.PORT || 5000
 
 //middleware
 app.use(cors());
 app.use(express.json());
 
-const uri =
-  "mongodb+srv://jamiulalam95:lrzGV94TqnPVtHWC@cluster0.idds8so.mongodb.net/?retryWrites=true&w=majority";
+console.log(process.env.DB_USER);
 
+// const uri =
+//   "mongodb+srv://<username>:<pass>@cluster0.idds8so.mongodb.net/?retryWrites=true&w=majority";
+
+const uri =
+  `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.idds8so.mongodb.net/?retryWrites=true&w=majority`;
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
@@ -23,7 +35,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     const dataset = client.db("techVerseDB");
 
     const usersCollection = dataset.collection("users");
@@ -57,24 +69,36 @@ async function run() {
     });
 
     app.patch("/usersCart/:id", async (req, res) => {
-      console.log("/usersCart/:id")
+      console.log("/usersCart/:id");
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
       const options = { upsert: true };
       const updatedCart = req.body;
-      console.log(id)
-
+      console.log(id);
       const product = {
         $set: {
           shopping_cart: updatedCart,
         },
       };
 
-      const result = await usersCollection.updateOne(
-        filter,
-        product,
-        options
-      );
+      const result = await usersCollection.updateOne(filter, product, options);
+      res.send(result);
+    });
+
+    app.patch("/usersCartEmail/:email", async (req, res) => {
+      console.log("/usersCartEmail/:email");
+      const email = req.params.email;
+      const filter = { email: email };
+      const options = { upsert: true };
+      const updatedCart = req.body;
+      console.log(email);
+      const product = {
+        $set: {
+          shopping_cart: updatedCart,
+        },
+      };
+
+      const result = await usersCollection.updateOne(filter, product, options);
       res.send(result);
     });
 
@@ -85,7 +109,7 @@ async function run() {
     });
 
     app.get("/products", async (req, res) => {
-      console.log("/products")
+      console.log("/products");
       const result = await productsCollection.find().toArray();
       res.send(result);
     });
@@ -96,7 +120,7 @@ async function run() {
     });
 
     app.get("/products/:id", async (req, res) => {
-      console.log("/products/:id")
+      console.log("/products/:id");
       const id = req.params.id;
       const result = await productsCollection.findOne({
         _id: new ObjectId(id),
@@ -109,7 +133,6 @@ async function run() {
       const filter = { _id: new ObjectId(id) };
       const options = { upsert: true };
       const updatedProduct = req.body;
-
       const product = {
         $set: {
           brand_name: updatedProduct.brand_name,
@@ -161,7 +184,7 @@ async function run() {
     });
 
     app.get("/brandDetails/:id", async (req, res) => {
-      console.log("/brandDetails/:id")
+      console.log("/brandDetails/:id");
       const id = req.params.id;
       console.log(id);
       const brand = await brandsCollection.findOne({
@@ -173,7 +196,6 @@ async function run() {
       console.log(result);
       res.send(result);
     });
-
 
     app.get("/brandInfo", async (req, res) => {
       console.log("/brandInfo");
@@ -191,7 +213,7 @@ async function run() {
     });
 
     app.get("/brandInfoByName/:name", async (req, res) => {
-      console.log("/brandInfoByName/:name"); 
+      console.log("/brandInfoByName/:name");
       const name = req.params.name;
       const result = await brandsCollection.findOne({
         brand_name: name,
@@ -200,14 +222,13 @@ async function run() {
     });
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+    // await client.db("admin").command({ ping: 1 });
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!"
+    // );
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
-    
   }
 }
 run().catch(console.dir);
