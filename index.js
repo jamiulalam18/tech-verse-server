@@ -249,5 +249,4 @@ app.listen(port, () => {
 // require('dotenv').config()
 // const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 // const port= process.env.PORT || 5000
-// এরপর vercel --prod দিয়ে আপডেট করে নতুন যে লিংক পাবেন সেটা চেক করে ফ্রন্টইন্ড এ আপডেট করে দেবেন।
-// এই কাজগুলো করে ফিক্সড করে জমা দেন
+// এরপর vercel --prod 
